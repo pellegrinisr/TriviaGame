@@ -12,68 +12,32 @@ $(document).ready(function() {
         hasAnswered: false,
 
         //methods
-        // count: function() {
-        //     if (triviaGame.hasAnswered) {
-        //         triviaGame.stopTimer();
-        //         console.log(this);
-        //     }
-        //     else if (triviaGame.timeRemaining > 0) {
-        //         triviaGame.timeRemaining--;
-        //         $('.time-remaining').text(triviaGame.timeRemaining);
-        //     }
-        //     else {
-        //         triviaGame.stopTimer();
-        //         clearInterval(triviaGame.myTimer);
-        //         triviaGame.testFunction();
-        //         console.log('out of time');
-        //         //triviaGame.timeRemaining = 15;
-        //         console.log(triviaGame.timeRemaining);
-        //     }
-        // },
         
-        // resetTimer: function() {
-        //     this.timeRemaining = 15;
-        //     setTimeout(triviaGame.startTimer, 1000);
-        // },
-
-        // startTimer: function () {
-        //     myTimer = setInterval(triviaGame.count, 1000);
-        // },
-
-        // stopTimer: function () {
-        //     clearInterval(triviaGame.myTimer);
-        //     console.log('stopTimer');
-        // },
-
-
-
-
-        // promptForEnter: function() {
-        //     if (this.isFirstGame) {
-        //         document.onkeyup = function(ev) {
-        //             console.log('on key up triggered');
-        //             console.log(ev.keyCode);
-        //             if(ev.keyCode === 13) {
-        //                 triviaGame.buildQuestionArray();
-        //                 triviaGame.isFirstGame = false;
-        //                 triviaGame.startTimer();
-        //             }
-        //         };
-        //     }
-        // },
+        //method will be called when user presses enter
         start: function() {
             triviaGame.displayQuestion();
             triviaGame.myTimer = setInterval(triviaGame.count, 1000);
         },
 
+        //method for the timer
+        //will iterate once per second
+        //will display current time remaining to the page
         count: function() {
             triviaGame.timeRemaining--;
             $('.time-remaining').text(triviaGame.timeRemaining);
             if (triviaGame.timeRemaining === 0) {
+                $('.message').text("You're out of time!");
                 clearInterval(triviaGame.myTimer);
+                triviaGame.timeRemaining = 15;
+                $('.time-remaining').text(triviaGame.timeRemaining);
+                $('.question').text('');
+                $('.answer').text('');
+                setTimeout(triviaGame.start, 2000);
             }
         },
 
+        //method to build 10 question objects and 
+        //store them in an array
         buildQuestionArray: function() {
             var question1 = new Question('Ulysses S. Grant appears on the front of which denomination of US currencey?');
             question1.answerArray[0] = '$50 dollar bill';
@@ -137,10 +101,12 @@ $(document).ready(function() {
             this.questionArray.push(question10);
         },
 
+        //method to display each question in a random order
+        //will keep track of questions already asked
+        //calls the fillAnswerSpaces method
         displayQuestion: function() {
-
             var randomNum;
-
+            $('.message').text('');
             do {
                 var alreadyAsked = false; 
                 randomNum = Math.floor(Math.random() * 10);
@@ -157,23 +123,10 @@ $(document).ready(function() {
             console.log(this.questionsAsked);
                 $('.question').text(this.questionArray[this.currentQuestion].questionText);
             this.fillAnswerSpaces(this.questionArray[this.currentQuestion]);
-               // this.startTimer();
-            // $('.answer').on('click', function(ev) {
-            //     if(ev.target.innerHTML === triviaGame.questionArray[triviaGame.currentQuestion].answerArray[0]) {
-            //         console.log('correct!');
-            //         clearInterval(myTimer);
-            //         this.timeRemaining = 15;
-            //         //should be calling some sort of next question function here
-            //     }else {
-            //         console.log('incorrect');
-            //         clearInterval(myTimer);
-            //         this.timeRemaining = 15;
-            //         //should be calling some sort of next question function here
-            //         //will reset the timer after a brief pause and generate the next question
-            //     }
-            // });
         },
 
+        //method to randomly assign one of four answer choices to each
+        //of the four answer divs
         fillAnswerSpaces: function(myQuestion) {
             var random;
             var indexUsed = [];
@@ -189,22 +142,18 @@ $(document).ready(function() {
         }
     };
 
+    //set click event handler on answer divs
     $('.answer').on('click', function(ev) {
-        if (triviaGame.questionsAsked.length < 10) {
+        if (triviaGame.questionsAsked.length <= 10) {
             clearInterval(triviaGame.myTimer);
             if(ev.target.innerHTML === triviaGame.questionArray[triviaGame.currentQuestion].answerArray[0]) {
                 console.log('correct!');
-               // clearInterval(triviaGame.myTimer);
-               // triviaGame.timeRemaining = 15;
-    
-                //should be calling some sort of next question function here
+                triviaGame.myScore++;
+                $('.message').text('Correct!');
+                $('.score').text('Score: ' + triviaGame.myScore);
             }else {
                 console.log('incorrect');
-              //  clearInterval(triviaGame.myTimer);
-            //    triviaGame.timeRemaining = 15;
-           
-                //should be calling some sort of next question function here
-                //will reset the timer after a brief pause and generate the next question
+                $('.message').text('Incorrect!');
             }
             triviaGame.timeRemaining = 15;
             $('.time-remaining').text(triviaGame.timeRemaining);
@@ -217,12 +166,15 @@ $(document).ready(function() {
        
     });
 
+    //trigger the start of the game with the enter key
     document.onkeyup = function(ev) {
         if (triviaGame.isFirstGame) {
             if (ev.keyCode === 13) {
                 triviaGame.isFirstGame = false;
                 triviaGame.buildQuestionArray();
+                $('.enter').text('')
                 triviaGame.start();
+                ;
             }
         }
     }
