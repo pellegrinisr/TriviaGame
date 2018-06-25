@@ -7,7 +7,6 @@ $(document).ready(function() {
         isFirstGame: true,
         myTimer: null,
         currentQuestion: null,
-        answerCorrect: null,
         myScore: 0,
         hasAnswered: false,
 
@@ -32,6 +31,8 @@ $(document).ready(function() {
                 $('.time-remaining').text(triviaGame.timeRemaining);
                 $('.question').text('');
                 $('.answer').text('');
+                $('.card').hide();
+                $('.container').height(287);
                 setTimeout(triviaGame.start, 2000);
             }
         },
@@ -99,6 +100,35 @@ $(document).ready(function() {
             question10.answerArray[2] = 'Herman Melville';
             question10.answerArray[3] = 'Henry David Thoreau';
             this.questionArray.push(question10);
+            var question11 = new Question('What is the name for the Greek goddess of victory?');
+            question11.answerArray[0] = 'Nike';
+            question11.answerArray[1] = 'Athena';
+            question11.answerArray[2] = 'Aphrodite';
+            question11.answerArray[3] = 'Hera';
+            this.questionArray.push(question11);
+            var question12 = new Question('Which one of the seven ancient wonders of the world is still standing today?');
+            question12.answerArray[0] = 'Great Pyramid of Giza';
+            question12.answerArray[1] = 'Statue of Zeus at Olympia';
+            question12.answerArray[2] = 'Lighthouse of Alexandria';
+            question12.answerArray[3] = 'Colossus of Rhodes';
+            this.questionArray.push(question12);
+            var question13 = new Question("Who wrote the novel 'To Kill A Mockingbird', published in 1960?");
+            question13.answerArray[0] = 'Harper Lee';
+            question13.answerArray[1] = 'Truman Capote';
+            question13.answerArray[2] = 'J.D. Salinger';
+            question13.answerArray[3] = 'John Steinbeck';
+            this.questionArray.push(question13);
+            var question14 = new Question('What city is traditionally said to be built on seven hills?');
+            question14.answerArray[0] = 'Rome';
+            question14.answerArray[1] = 'Paris';
+            question14.answerArray[2] = 'Philadelphia';
+            question14.answerArray[3] = 'Mexico City';
+            this.questionArray.push(question14);
+            var question15 = new Question('In 1893, which country was the first to give women the right to vote?');
+            question15.answerArray[0] = 'New Zealand';
+            question15.answerArray[1] = 'Great Britain';
+            question15.answerArray[2] = 'The United States';
+            question15.answerArray[3] = 'Belgium';
         },
 
         //method to display each question in a random order
@@ -109,14 +139,14 @@ $(document).ready(function() {
             $('.message').text('');
             do {
                 var alreadyAsked = false; 
-                randomNum = Math.floor(Math.random() * 10);
+                randomNum = Math.floor(Math.random() * this.questionArray.length);
                 console.log(randomNum);
                 for (var j = 0; j < this.questionsAsked.length; j++) {
                     if (randomNum === this.questionsAsked[j]) {
                         alreadyAsked = true;
                     }
                 }
-            } while (alreadyAsked && triviaGame.questionsAsked.length < 10);
+            } while (alreadyAsked && triviaGame.questionsAsked.length < triviaGame.questionArray.length);
             
             this.currentQuestion = randomNum
             this.questionsAsked.push(this.currentQuestion);
@@ -138,13 +168,15 @@ $(document).ready(function() {
                indexUsed.push(random);
                var myClassName = '.answer' + i;
                $(myClassName).text(myQuestion.answerArray[random]);
-            }   
+            }
+            $('.container').height('auto');
+            $('.card').show();   
         }
     };
 
     //set click event handler on answer divs
     $('.answer').on('click', function(ev) {
-        if (triviaGame.questionsAsked.length <= 10) {
+        if (triviaGame.questionsAsked.length <= triviaGame.questionArray.length) {
             clearInterval(triviaGame.myTimer);
             if(ev.target.innerHTML === triviaGame.questionArray[triviaGame.currentQuestion].answerArray[0]) {
                 console.log('correct!');
@@ -159,12 +191,19 @@ $(document).ready(function() {
             $('.time-remaining').text(triviaGame.timeRemaining);
             $('.question').text('');
             $('.answer').text('');
+            $('.card').hide();
+            $('.container').height(287);
             setTimeout(triviaGame.start, 2000);
         } else {
             alert('game over');
+            $('.enter').show();
+            triviaGame.isFirstGame = true;
         }
-       
     });
+
+    $('.answer').hover(function() {
+        $('.answer').css('cursor', 'pointer');
+    })
 
     //trigger the start of the game with the enter key
     document.onkeyup = function(ev) {
@@ -172,14 +211,10 @@ $(document).ready(function() {
             if (ev.keyCode === 13) {
                 triviaGame.isFirstGame = false;
                 triviaGame.buildQuestionArray();
-                $('.enter').text('')
+                $('.enter').hide();
                 triviaGame.start();
                 ;
             }
         }
     }
-
 });
-
-
-
