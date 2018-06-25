@@ -197,7 +197,9 @@ $(document).ready(function() {
         } else {
             alert('game over');
             $('.enter').show();
+            $('.card').hide();
             triviaGame.isFirstGame = true;
+            triviaGame.myScore = 0;
         }
     });
 
