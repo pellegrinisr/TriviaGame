@@ -14,21 +14,34 @@
 <body>
     <div class="container">
         <div class="row text-center">
-            <div class="col-sm-12">
+            <div class="col-sm-2 text-right time-label">Time Remaining:</div>
+            <div class="col-sm-2 time-remaining text-left">15</div>
+            <div class="col-sm-4 title">
                 <h1>Trivia</h1>
             </div>
+            <div class="col-sm-4 message text-center"></div>
         </div>
         <div class="row text-center">
             <div class="col-sm-12 enter">Press Enter to Start</div>
         </div>
         <div class="row">
-            <div class="col-sm-4 message text-center"></div>
-            <div class="col-sm-2 text-right">Time Remaining:</div>
-            <div class="col-sm-2 text-left time-remaining">15</div>
-        </div>
-        <div class="row">
             <div class="col-sm-12 score text-center"></div>
         </div>
+        <div class="row">
+            <div class="col-sm">
+                <div class="card" style="width: 36rem">
+                    <div class="card-header question"></div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item answer1 answer"></li>
+                        <li class="list-group-item answer2 answer"></li>
+                        <li class="list-group-item answer3 answer"></li>
+                        <li class="list-group-item answer4 answer"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+<!--
         <div class="row text-center">
             <div class="col-sm-12 question">
                 This is where the question will go.
@@ -45,7 +58,7 @@
         </div>
         <div class="row text-center">
             <div class="col-sm-12 answer4 answer">This is where the fourth answer will go.</div>
-        </div>
+        </div> -->
     </div>
 </body>
 </html>
