@@ -14,7 +14,6 @@ $(document).ready(function() {
         correctAnswersound: null,
         incorrectAnswerSound: null,
 
-
         //methods
         
         //method will be called when user presses enter
@@ -216,6 +215,7 @@ $(document).ready(function() {
                 this.isFirstGame = true;
                 clearInterval(triviaGame.myTimer);
                 this.resetVariables();
+                
             } else {
                 triviaGame.timeRemaining = 15;               
                 $('.question').text('');
@@ -234,12 +234,14 @@ $(document).ready(function() {
             clearInterval(triviaGame.myTimer);
             if(ev.target.innerHTML === triviaGame.questionArray[triviaGame.currentQuestion].answerArray[0]) {
                 console.log('correct!');
+                triviaGame.correctAnswersound.play();
                 triviaGame.myScore++;
                 console.log('myScore (just after increment): ' + triviaGame.myScore); 
                 $('.message').text('Correct!');
                 
             }else {
                 console.log('incorrect');
+                triviaGame.incorrectAnswerSound.play();
                 $('.message').text('Incorrect!');
                 triviaGame.questionsIncorrect++;
             }
@@ -267,8 +269,8 @@ $(document).ready(function() {
 
     //create the audio elements and store them in the global variables
     //set the attribute of each element to the appropriate audio clip
-    correctAnswersound = document.createElement('audio');
-    correctAnswersound.setAttribute('src', 'assets/sounds/Correct-Answer-Soundeffect.mp3');
-    incorrectAnswerSound = document.createElement('audio');
-    incorrectAnswerSound.setAttribute('src', 'assets/sounds/Wrong-answer-sound-effect.mp3');
+    triviaGame.correctAnswersound = document.createElement('audio');
+    triviaGame.correctAnswersound.setAttribute('src', 'assets/sounds/Correct-Answer-Soundeffect.mp3');
+    triviaGame.incorrectAnswerSound = document.createElement('audio');
+    triviaGame.incorrectAnswerSound.setAttribute('src', 'assets/sounds/Wrong-answer-sound-effect.mp3');
 });
