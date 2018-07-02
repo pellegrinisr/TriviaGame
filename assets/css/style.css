@@ -30,3 +30,6 @@ body {
 .score {
     color: white;
 }
+.card {
+    margin-top: 1rem;
+}

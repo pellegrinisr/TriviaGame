@@ -9,6 +9,8 @@ $(document).ready(function() {
         currentQuestion: null,
         myScore: 0,
         hasAnswered: false,
+        correctAnswersound: null,
+        incorrectAnswerSound: null,
 
         //methods
         
@@ -219,4 +221,11 @@ $(document).ready(function() {
             }
         }
     }
+
+    //create the audio elements and store them in the global variables
+    //set the attribute of each element to the appropriate audio clip
+    correctAnswersound = document.createElement('audio');
+    correctAnswersound.setAttribute('src', 'assets/sounds/Correct-Answer-Soundeffect.mp3');
+    incorrectAnswerSound = document.createElement('audio');
+    incorrectAnswerSound.setAttribute('src', 'assets/sounds/Wrong-answer-sound-effect.mp3');
 });
