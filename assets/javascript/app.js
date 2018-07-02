@@ -8,9 +8,12 @@ $(document).ready(function() {
         myTimer: null,
         currentQuestion: null,
         myScore: 0,
+        questionsTimedOut: 0,
+        questionsIncorrect: 0,
         hasAnswered: false,
         correctAnswersound: null,
         incorrectAnswerSound: null,
+
 
         //methods
         
@@ -35,6 +38,7 @@ $(document).ready(function() {
                 $('.answer').text('');
                 $('.card').hide();
                 $('.container').height(287);
+                triviaGame.questionsTimedOut++;
                 setTimeout(triviaGame.start, 2000);
             }
         },
@@ -131,6 +135,7 @@ $(document).ready(function() {
             question15.answerArray[1] = 'Great Britain';
             question15.answerArray[2] = 'The United States';
             question15.answerArray[3] = 'Belgium';
+            this.questionArray.push(question15);
         },
 
         //method to display each question in a random order
@@ -139,22 +144,26 @@ $(document).ready(function() {
         displayQuestion: function() {
             var randomNum;
             $('.message').text('');
-            do {
-                var alreadyAsked = false; 
-                randomNum = Math.floor(Math.random() * this.questionArray.length);
-                console.log(randomNum);
-                for (var j = 0; j < this.questionsAsked.length; j++) {
-                    if (randomNum === this.questionsAsked[j]) {
-                        alreadyAsked = true;
+            console.log('triviaGame.questionsAsked.length: ' + triviaGame.questionsAsked.length);
+            if (triviaGame.questionsAsked.length < triviaGame.questionArray.length) {
+                do { 
+                    var alreadyAsked = false; 
+                    randomNum = Math.floor(Math.random() * this.questionArray.length);
+                    console.log(randomNum);
+                    for (var j = 0; j < this.questionsAsked.length; j++) {
+                        if (randomNum === this.questionsAsked[j]) {
+                            alreadyAsked = true;
+                        }
                     }
-                }
-            } while (alreadyAsked && triviaGame.questionsAsked.length < triviaGame.questionArray.length);
-            
-            this.currentQuestion = randomNum
-            this.questionsAsked.push(this.currentQuestion);
-            console.log(this.questionsAsked);
+                    console.log('already asked? ' + alreadyAsked);
+                } while (alreadyAsked);
+                this.currentQuestion = randomNum;
+                this.questionsAsked.push(this.currentQuestion);
+                console.log(this.questionsAsked);
                 $('.question').text(this.questionArray[this.currentQuestion].questionText);
-            this.fillAnswerSpaces(this.questionArray[this.currentQuestion]);
+                this.fillAnswerSpaces(this.questionArray[this.currentQuestion]);
+                //problem getting the 15th question to display                              
+            } 
         },
 
         //method to randomly assign one of four answer choices to each
@@ -173,36 +182,70 @@ $(document).ready(function() {
             }
             $('.container').height('auto');
             $('.card').show();   
+        },
+
+        resetVariables: function() {
+            console.log('resetVariables function called');
+            this.myScore = 0;
+            console.log('resetVariables myScore: ' + this.myScore);
+            this.questionsIncorrect = 0;
+            console.log('resetVariables questionsIncorrect: ' + this.questionsIncorrect);
+            this.questionsTimedOut = 0;
+            console.log('resetVariables questionsTimedOut: ' + this.questionsTimedOut);
+            this.timeRemaining = 15;
+            console.log('resetVariables timeRemaining: ' + this.timeRemaining);
+            var length = triviaGame.questionsAsked.length;
+            for (var i = 0; i < length; i++) {
+                triviaGame.questionArray.pop();
+                triviaGame.questionsAsked.pop();
+            }
+            console.log('resetVariables questionsAsked: ' + this.questionsAsked + ' resetVariables questionArray: ' + this.questionArray);
+        }, 
+
+        checkIfGameOver: function() {
+            if (this.questionsAsked.length === this.questionArray.length) {
+                console.log('myScore: ' + this.myScore);
+                $('.message').text('Game over!');
+                $('.enter').show();
+                $('.card').show();
+                $('.question').text('Score Summary');
+                $('.answer1').text('Number Correct: ' + this.myScore);
+                $('.answer2').text('Number Incorrect: ' + this.questionsIncorrect);
+                $('.answer3').text('Number Timed Out: ' + this.questionsTimedOut);
+                $('.answer4').text('Percentage Correct: ' + this.myScore / this.questionsAsked.length);
+                this.isFirstGame = true;
+                clearInterval(triviaGame.myTimer);
+                this.resetVariables();
+            } else {
+                triviaGame.timeRemaining = 15;               
+                $('.question').text('');
+                $('.answer').text('');
+                $('.card').hide();
+                $('.container').height(287);
+                setTimeout(triviaGame.start, 2000);
+            }
+            $('.time-remaining').text(this.timeRemaining);
         }
     };
 
     //set click event handler on answer divs
     $('.answer').on('click', function(ev) {
-        if (triviaGame.questionsAsked.length <= triviaGame.questionArray.length) {
+        if (triviaGame.questionsAsked.length <= triviaGame.questionArray.length && !triviaGame.isFirstGame) {
             clearInterval(triviaGame.myTimer);
             if(ev.target.innerHTML === triviaGame.questionArray[triviaGame.currentQuestion].answerArray[0]) {
                 console.log('correct!');
                 triviaGame.myScore++;
+                console.log('myScore (just after increment): ' + triviaGame.myScore); 
                 $('.message').text('Correct!');
-                $('.score').text('Score: ' + triviaGame.myScore);
+                
             }else {
                 console.log('incorrect');
                 $('.message').text('Incorrect!');
+                triviaGame.questionsIncorrect++;
             }
-            triviaGame.timeRemaining = 15;
-            $('.time-remaining').text(triviaGame.timeRemaining);
-            $('.question').text('');
-            $('.answer').text('');
-            $('.card').hide();
-            $('.container').height(287);
-            setTimeout(triviaGame.start, 2000);
-        } else {
-            alert('game over');
-            $('.enter').show();
-            $('.card').hide();
-            triviaGame.isFirstGame = true;
-            triviaGame.myScore = 0;
-        }
+            $('.score').text('Score: ' + triviaGame.myScore);
+            triviaGame.checkIfGameOver();
+        } 
     });
 
     $('.answer').hover(function() {
@@ -217,7 +260,7 @@ $(document).ready(function() {
                 triviaGame.buildQuestionArray();
                 $('.enter').hide();
                 triviaGame.start();
-                ;
+                
             }
         }
     }
